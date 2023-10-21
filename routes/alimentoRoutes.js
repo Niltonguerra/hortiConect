@@ -4,6 +4,10 @@ const PostAlimento = require('../models/postAlimento');
 
 
 
+
+
+// testando para ver se o node sai do git hub
+
 // // Rota para obter todos os contatos
 // router.get('/', async (req, res) => {
 //   try {

@@ -6,9 +6,8 @@ const PostAlimento = require('../models/postAlimento');
 
 
 
-// testando para ver se o node sai do git hub
 
-// Rota para obter todos os contatos
+// Rota para obter todos os dados do banco
 router.get('/', async (req, res) => {
   try {
     const contatos = await PostAlimento.find();
@@ -19,27 +18,61 @@ router.get('/', async (req, res) => {
 });
 
 
-router.get('/buscarPorNome/:nome', async (req, res) => {
-  const nome = req.params.nome;
 
+
+// função para pegar um dado por nome
+async function getAlimento(req, res, next) {
   try {
-    const postAlimento = await PostAlimento.findOne({ Nome: nome });
+    const postAlimento = await PostAlimento.findOne({ Nome: req.params.nome });
 
-    if (!postAlimento) {
+    if (postAlimento == null) {
       return res.status(404).json({ message: 'Registro não encontrado' });
     }
 
-    res.status(200).json(postAlimento);
+    
+    res.alimento = postAlimento;
+    next();
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Erro ao buscar o registro' });
   }
+};
+
+
+// Rota para pesquisar por nome no banco
+router.get('/:nome', getAlimento, (req, res) => {
+  res.json(res.alimento);
 });
+
+
+
+
+router.delete('/deletarPorNome/:nome', async (req, res) => {
+  const nome = req.params.nome;
+
+  try {
+    // Use o método findOneAndDelete para buscar e deletar o registro
+    const deletedPostAlimento = await PostAlimento.findOneAndDelete({ Nome: nome });
+
+    if (!deletedPostAlimento) {
+      return res.status(404).json({ message: 'Registro não encontrado' });
+    }
+
+    res.status(200).json({ message: 'Registro deletado com sucesso' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erro ao deletar o registro' });
+  }
+});
+
+
 
   // anotações muito uteis, não excluir
   // tipoDoAlimento: req.body.id_topico[0].subTopico[0].nomesubTopico,
   //     nomeCientifico: req.body.id_topico[0].nomeTopico,
   
+
+
 
 // Rota para criar um novo contato
 router.post('/', async (req, res) => {
@@ -96,6 +129,10 @@ const converterDadosAPIEmPostAlimento = (dadosAPI) => {
 
 
 
+
+
+
+
 // Rota para editar por Nome
 router.put('/editarPorNome/:nome', async (req, res) => {
   const nome = req.params.nome;
@@ -119,29 +156,6 @@ router.put('/editarPorNome/:nome', async (req, res) => {
     res.status(500).json({ message: 'Erro ao editar o registro' });
   }
 });
-
-
-
-
-// Rota para deletar por Nome
-router.delete('/deletarPorNome/:nome', async (req, res) => {
-  const nome = req.params.nome;
-
-  try {
-    // Use o método findOneAndDelete para buscar e deletar o registro
-    const deletedPostAlimento = await PostAlimento.findOneAndDelete({ Nome: nome });
-
-    if (!deletedPostAlimento) {
-      return res.status(404).json({ message: 'Registro não encontrado' });
-    }
-
-    res.status(200).json({ message: 'Registro deletado com sucesso' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Erro ao deletar o registro' });
-  }
-});
-
 
 
 module.exports = router;

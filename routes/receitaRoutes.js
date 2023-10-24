@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const PostAlimento = require('../models/postAlimento');
+const PostReceita = require('../models/postReceita');
 
 
 
@@ -10,8 +10,8 @@ const PostAlimento = require('../models/postAlimento');
 // Rota para obter todos os dados do banco
 router.get('/', async (req, res) => {
   try {
-    const alimentos = await PostAlimento.find();
-    res.json(alimentos);
+    const Receitas = await PostReceita.find();
+    res.json(Receitas);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -21,9 +21,9 @@ router.get('/', async (req, res) => {
 
 
 // função para pegar um dado por nome
-async function getAlimento(req, res, next) {
+async function getReceita(req, res, next) {
   try {
-    const postAlimento = await PostAlimento.findOne({ Nome: req.params.nome });
+    const postAlimento = await PostReceita.findOne({ nome: req.params.nome });
 
     if (postAlimento == null) {
       return res.status(404).json({ message: 'Registro não encontrado' });
@@ -40,19 +40,19 @@ async function getAlimento(req, res, next) {
 
 
 // Rota para pesquisar por nome no banco
-router.get('/:nome', getAlimento, (req, res) => {
+router.get('/:nome', getReceita, (req, res) => {
   res.json(res.alimento);
 });
 
 
 
-
+// Rota para deletar um registro
 router.delete('/deletarPorNome/:nome', async (req, res) => {
   const nome = req.params.nome;
 
   try {
     // Use o método findOneAndDelete para buscar e deletar o registro
-    const deletedPostAlimento = await PostAlimento.findOneAndDelete({ Nome: nome });
+    const deletedPostAlimento = await PostReceita.findOneAndDelete({ nome: nome });
 
     if (!deletedPostAlimento) {
       return res.status(404).json({ message: 'Registro não encontrado' });
@@ -73,19 +73,16 @@ router.delete('/deletarPorNome/:nome', async (req, res) => {
   
 
 
-
-// Rota para criar um novo contato
+// cria nova receita
 router.post('/', async (req, res) => {
-
   try {
-    const dadosDaAPI = req.body;
-    const postAlimento = converterDadosAPIEmPostAlimento(dadosDaAPI);
 
-    // Salvar o novo documento no banco de dados
-    const newPostAlimento = await postAlimento.save();
+    const dadosDaAPI = req.body;
+    const Receita = converterDadosAPIEmPostAlimento(dadosDaAPI);
+    const newPostReceita = await Receita.save();
 
     // Responder com o novo documento criado
-    res.status(201).json(newPostAlimento);
+    res.status(201).json(newPostReceita);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -93,41 +90,40 @@ router.post('/', async (req, res) => {
 
 
 
-// Função para converter dados da API em postAlimento
+
+
 const converterDadosAPIEmPostAlimento = (dadosAPI) => {
-  const postAlimento = new PostAlimento({
-    Nome: dadosAPI.Nome,
-    tipoDoAlimento: dadosAPI.tipoDoAlimento,
-    nomeCientifico: dadosAPI.nomeCientifico,
-    id_topico: [], // Inicialize um array vazio
+  
+  const novaReceita = new PostReceita({
+    nome: dadosAPI.nome,
+    foto: dadosAPI.foto,
+    ingredientes: [],
+    modoDePreparo: [],
   });
 
-  for (const idTopicoData of Object.values(dadosAPI.id_topico)) {
-    const idTopicoObject = {
-      idTopico: idTopicoData.idTopico,
-      nomeTopico: idTopicoData.nomeTopico,
-      descricaoTopico: idTopicoData.descricaoTopico,
-      foto: idTopicoData.foto,
-      subTopico: [], // Inicialize um array vazio
+  for (const ingredientes of Object.values(dadosAPI.ingredientes)) {
+    const ingredientes_array = {
+      
+      nome: ingredientes.nome,
+      
     };
-
-    for (const subTopicoData of Object.values(idTopicoData.subTopico)) {
-      const subTopicoObject = {
-        idSubTopico: subTopicoData.idSubTopico,
-        nomesubTopico: subTopicoData.nomesubTopico,
-        descricaosubTopico: subTopicoData.descricaosubTopico,
-      };
-
-      idTopicoObject.subTopico.push(subTopicoObject);
-    }
-
-    postAlimento.id_topico.push(idTopicoObject);
+    novaReceita.ingredientes.push(ingredientes_array);
   }
 
-  return postAlimento;
+
+  for (const modoDePreparo of Object.values(dadosAPI.modoDePreparo)) {
+    const ingredientes_array = {
+      
+      passos: modoDePreparo.passos,
+      
+    };
+    novaReceita.modoDePreparo.push(ingredientes_array);
+  }
+
+
+
+  return novaReceita;
 };
-
-
 
 
 
@@ -140,7 +136,7 @@ router.put('/editarPorNome/:nome', async (req, res) => {
 
   try {
     // Use o método findOneAndUpdate para buscar e atualizar o registro
-    const postAlimento = await PostAlimento.findOneAndUpdate(
+    const postAlimento = await PostReceita.findOneAndUpdate(
       { Nome: nome },
       novosDados,
       { new: true } // Para retornar o documento atualizado

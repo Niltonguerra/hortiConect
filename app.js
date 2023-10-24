@@ -28,7 +28,10 @@ app.use(express.json());
 
 
 const PostRouter = require('./routes/alimentoRoutes');
-app.use('/receitas', PostRouter);
+app.use('/alimentos', PostRouter);
+
+const ReceitasRouter = require('./routes/receitaRoutes');
+app.use('/receitas', ReceitasRouter);
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,

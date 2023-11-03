@@ -17,6 +17,31 @@ const ModoDePreparoShema = new mongoose.Schema({
   },
 });
 
+const FotoSchema = new mongoose.Schema({
+  imagem_grande: {
+    filename: {type: String,},
+    name: {type: String,},
+    mime: {type: String,},
+    extension: {type: String,},
+    url: {type: String,},
+  },
+  imagem_media: {
+    filename: {type: String,},
+    name: {type: String,},
+    mime: {type: String,},
+    extension: {type: String,},
+    url: {type: String,},
+  },
+  imagem_pequena: {
+    filename: {type: String,},
+    name: {type: String,},
+    mime: {type: String,},
+    extension: {type: String,},
+    url: {type: String,},
+  },
+  excluir: {type: String,},
+
+});
 
 
 const receitaSchema = new mongoose.Schema({
@@ -24,9 +49,10 @@ const receitaSchema = new mongoose.Schema({
     type: String,
     
   },
-  foto: {
-    type: String,
-    
+  foto: FotoSchema,
+  
+  tempoDePreparo:{
+    type:String,
   },
   ingredientes: [ingredientesShema],
   modoDePreparo: [ModoDePreparoShema],

@@ -1,17 +1,34 @@
 const express = require('express');
 const router = express.Router();
 const PostReceita = require('../models/postReceita');
+const axios = require('axios');
 
+const https = require('https');
+const FormData = require('form-data');
+const multer = require('multer');
 
+const storage = multer.memoryStorage(); // Armazena as imagens em memória (você pode alterar isso para o armazenamento em disco se preferir)
+const upload = multer({ storage: storage });
 
-
-
+const fs = require('fs');
+const path = require('path');
 
 // Rota para obter todos os dados do banco
 router.get('/', async (req, res) => {
   try {
     const Receitas = await PostReceita.find();
     res.json(Receitas);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+// rota para pegar apenas o _id e nome do banco de dados
+router.get('/Nomeid', async (req, res) => {
+  try {
+    const alimentos = await PostReceita.find().select('nome');
+    res.json(alimentos);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -73,12 +90,29 @@ router.delete('/deletarPorNome/:nome', async (req, res) => {
   
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // cria nova receita
-router.post('/', async (req, res) => {
-  try {
+router.post('/', async(req, res) => {
+
+    try {
+    
 
     const dadosDaAPI = req.body;
-    const Receita = converterDadosAPIEmPostAlimento(dadosDaAPI);
+    const Receita = converterDadosAPIReceitas(dadosDaAPI);
     const newPostReceita = await Receita.save();
 
     // Responder com o novo documento criado
@@ -92,11 +126,41 @@ router.post('/', async (req, res) => {
 
 
 
-const converterDadosAPIEmPostAlimento = (dadosAPI) => {
+const converterDadosAPIReceitas = (dadosAPI) => {
   
+
+const fotoGrande = dadosAPI.foto.imagem_grande;
+const fotoMedia = dadosAPI.foto.imagem_media;
+const fotoPequena = dadosAPI.foto.imagem_pequena;
+
   const novaReceita = new PostReceita({
     nome: dadosAPI.nome,
-    foto: dadosAPI.foto,
+    foto: {
+      imagem_grande: {
+        filename: fotoGrande.filename,
+        name: fotoGrande.name,
+        mime: fotoGrande.mime,
+        extension:  fotoGrande.extension,
+        url: fotoGrande.url,
+      },
+      imagem_media: {
+        filename: fotoMedia.filename,
+        name: fotoMedia.name,
+        mime: fotoMedia.mime,
+        extension:  fotoMedia.extension,
+        url: fotoMedia.url,
+      },
+      imagem_pequena: {
+        filename: fotoPequena.filename,
+        name: fotoPequena.name,
+        mime: fotoPequena.mime,
+        extension:  fotoPequena.extension,
+        url: fotoPequena.url,
+      },
+      excluir: dadosAPI.foto.excluir,
+      
+    },
+    tempoDePreparo: dadosAPI.tempoDePreparo,
     ingredientes: [],
     modoDePreparo: [],
   });
@@ -124,6 +188,24 @@ const converterDadosAPIEmPostAlimento = (dadosAPI) => {
 
   return novaReceita;
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -19,7 +19,31 @@ const subTopicoSchema = new mongoose.Schema({
 
 
 
+const FotoSchema = new mongoose.Schema({
+  imagem_grande: {
+    filename: {type: String,},
+    name: {type: String,},
+    mime: {type: String,},
+    extension: {type: String,},
+    url: {type: String,},
+  },
+  imagem_media: {
+    filename: {type: String,},
+    name: {type: String,},
+    mime: {type: String,},
+    extension: {type: String,},
+    url: {type: String,},
+  },
+  imagem_pequena: {
+    filename: {type: String,},
+    name: {type: String,},
+    mime: {type: String,},
+    extension: {type: String,},
+    url: {type: String,},
+  },
+  excluir: {type: String,},
 
+});
 
 
 
@@ -29,11 +53,6 @@ const topicoSchema = new mongoose.Schema({
   idTopico: {
     type: Number,
   
-  
-  // Defina um valor padrão (por exemplo, null) se necessário
-  // para corresponder ao seu modelo de tipagem no frontend.
-  // Se não houver valor padrão, pode ser undefined quando não especificado no frontend.
-  // Consulte o seu modelo de tipagem no frontend para definir isso corretamente.
   },
   nomeTopico: {
     type: String,
@@ -43,10 +62,8 @@ const topicoSchema = new mongoose.Schema({
     type: String,
     
   },
-  foto: {
-    type: String,
-    
-  },
+  foto: FotoSchema,
+  
   subTopico: [subTopicoSchema],
 });
 
@@ -60,7 +77,7 @@ const topicoSchema = new mongoose.Schema({
 
 
 const postAlimentoSchema = new mongoose.Schema({
-  Nome: {
+  nome: {
     type: String,
     
   },
@@ -69,6 +86,10 @@ const postAlimentoSchema = new mongoose.Schema({
     
   },
   nomeCientifico: {
+    type: String,
+  },
+
+  descricaoVegetal:{
     type: String,
   },
 

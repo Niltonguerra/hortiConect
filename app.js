@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+
+
 const cors = require('cors');
 const bodyParser = require('body-parser'); // Importe o body-parser
 
@@ -26,7 +28,6 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' })); // Use o body
 app.use(express.json());
 
 
-
 const PostRouter = require('./routes/alimentoRoutes');
 app.use('/alimentos', PostRouter);
 
@@ -50,3 +51,7 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+
+
+
+

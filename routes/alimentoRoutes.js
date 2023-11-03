@@ -17,13 +17,23 @@ router.get('/', async (req, res) => {
   }
 });
 
+// rota para pegar apenas o _id e nome do banco de dados
+router.get('/Nomeid', async (req, res) => {
+  try {
+    const alimentos = await PostAlimento.find().select('nome');
+    res.json(alimentos);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 
 
 
 // função para pegar um dado por nome
 async function getAlimento(req, res, next) {
   try {
-    const postAlimento = await PostAlimento.findOne({ Nome: req.params.nome });
+    const postAlimento = await PostAlimento.findOne({ nome: req.params.nome });
 
     if (postAlimento == null) {
       return res.status(404).json({ message: 'Registro não encontrado' });
@@ -52,7 +62,7 @@ router.delete('/deletarPorNome/:nome', async (req, res) => {
 
   try {
     // Use o método findOneAndDelete para buscar e deletar o registro
-    const deletedPostAlimento = await PostAlimento.findOneAndDelete({ Nome: nome });
+    const deletedPostAlimento = await PostAlimento.findOneAndDelete({ nome: nome });
 
     if (!deletedPostAlimento) {
       return res.status(404).json({ message: 'Registro não encontrado' });
@@ -95,19 +105,58 @@ router.post('/', async (req, res) => {
 
 // Função para converter dados da API em postAlimento
 const converterDadosAPIEmPostAlimento = (dadosAPI) => {
+
+
+
+
   const postAlimento = new PostAlimento({
-    Nome: dadosAPI.Nome,
+    nome: dadosAPI.nome,
     tipoDoAlimento: dadosAPI.tipoDoAlimento,
     nomeCientifico: dadosAPI.nomeCientifico,
+    descricaoVegetal:dadosAPI.descricaoVegetal,
     id_topico: [], // Inicialize um array vazio
   });
 
   for (const idTopicoData of Object.values(dadosAPI.id_topico)) {
+
+
+    const fotoGrande = idTopicoData.foto.imagem_grande;
+    const fotoMedia = idTopicoData.foto.imagem_media;
+    const fotoPequena = idTopicoData.foto.imagem_pequena;
+    
+
+
+
+
     const idTopicoObject = {
       idTopico: idTopicoData.idTopico,
       nomeTopico: idTopicoData.nomeTopico,
       descricaoTopico: idTopicoData.descricaoTopico,
-      foto: idTopicoData.foto,
+      foto: {
+        imagem_grande: {
+          filename: fotoGrande.filename,
+          name: fotoGrande.name,
+          mime: fotoGrande.mime,
+          extension:  fotoGrande.extension,
+          url: fotoGrande.url,
+        },
+        imagem_media: {
+          filename: fotoMedia.filename,
+          name: fotoMedia.name,
+          mime: fotoMedia.mime,
+          extension:  fotoMedia.extension,
+          url: fotoMedia.url,
+        },
+        imagem_pequena: {
+          filename: fotoPequena.filename,
+          name: fotoPequena.name,
+          mime: fotoPequena.mime,
+          extension:  fotoPequena.extension,
+          url: fotoPequena.url,
+        },
+        excluir: idTopicoData.foto.excluir,
+        
+      },
       subTopico: [], // Inicialize um array vazio
     };
 
@@ -141,7 +190,7 @@ router.put('/editarPorNome/:nome', async (req, res) => {
   try {
     // Use o método findOneAndUpdate para buscar e atualizar o registro
     const postAlimento = await PostAlimento.findOneAndUpdate(
-      { Nome: nome },
+      { nome: nome },
       novosDados,
       { new: true } // Para retornar o documento atualizado
     );
@@ -156,6 +205,20 @@ router.put('/editarPorNome/:nome', async (req, res) => {
     res.status(500).json({ message: 'Erro ao editar o registro' });
   }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 module.exports = router;

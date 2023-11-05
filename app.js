@@ -34,6 +34,14 @@ app.use('/alimentos', PostRouter);
 const ReceitasRouter = require('./routes/receitaRoutes');
 app.use('/receitas', ReceitasRouter);
 
+const formularioRoutes = require('./routes/formularioRoutes');
+app.use('/formulario', formularioRoutes);
+
+
+
+
+
+
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,

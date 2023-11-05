@@ -1,17 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const PostReceita = require('../models/postReceita');
-const axios = require('axios');
 
-const https = require('https');
-const FormData = require('form-data');
-const multer = require('multer');
 
-const storage = multer.memoryStorage(); // Armazena as imagens em memória (você pode alterar isso para o armazenamento em disco se preferir)
-const upload = multer({ storage: storage });
 
-const fs = require('fs');
-const path = require('path');
 
 // Rota para obter todos os dados do banco
 router.get('/', async (req, res) => {
@@ -92,8 +84,20 @@ router.delete('/deletarPorNome/:nome', async (req, res) => {
 
 
 
+// busca no banco de dados pelos ingredientes da Receita
+  router.get('/buscaIngredientes/:ingrediente', async (req, res) => {
+    const ingrediente = req.params.ingrediente;
+  
+    try {
+      // Use o método findOneAndDelete para buscar e deletar o registro
+      const registrosEncontrados = await PostReceita.find({ "ingredientes.nome": ingrediente });
 
-
+      res.json(registrosEncontrados);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Erro ao deletar o registro' });
+    }
+  });
 
 
 

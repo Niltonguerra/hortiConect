@@ -30,7 +30,7 @@ router.get('/Nomeid', async (req, res) => {
 
 
 
-// função para pegar um dado por nome
+// função para pegar um registro por nome
 async function getAlimento(req, res, next) {
   try {
     const postAlimento = await PostAlimento.findOne({ nome: req.params.nome });

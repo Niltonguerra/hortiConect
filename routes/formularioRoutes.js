@@ -44,7 +44,7 @@ async function getForm(req, res, next) {
 
 
 // Rota para deletar um registro
-router.delete('/deletarPorNome/:id', async (req, res) => {
+router.delete('/deletarPorId/:id', async (req, res) => {
   const id = req.params.id;
 
   try {

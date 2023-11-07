@@ -29,6 +29,10 @@ router.get('/Nomeid', async (req, res) => {
 
 
 
+// Rota para pesquisar por nome no banco
+router.get('/:nome', getAlimento, (req, res) => {
+  res.json(res.alimento);
+});
 
 // função para pegar um registro por nome
 async function getAlimento(req, res, next) {
@@ -49,10 +53,57 @@ async function getAlimento(req, res, next) {
 };
 
 
-// Rota para pesquisar por nome no banco
-router.get('/:nome', getAlimento, (req, res) => {
+
+
+
+
+
+// Rota para pesquisar por nome incompleto no banco
+router.get('/nomeIncompleto/:nome', getReceitaIncompleta, (req, res) => {
   res.json(res.alimento);
 });
+
+
+
+// Rota para pesquisar por nome incompleto no banco
+
+async function getReceitaIncompleta(req, res, next) {
+
+  const nomeIncompleto = req.params.nome;
+
+  try {
+    const postAlimento = await PostAlimento.find({ nome: { $regex: nomeIncompleto, $options: 'i' } });
+
+    if (postAlimento == null) {
+      return res.status(404).json({ message: 'Registro não encontrado' });
+    }
+
+    
+    res.alimento = postAlimento;
+    next();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erro ao buscar o registro' });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -17,6 +17,16 @@ router.get('/', async (req, res) => {
   }
 });
 
+
+
+
+
+
+
+
+
+
+
 // rota para pegar apenas o _id e nome do banco de dados
 router.get('/Nomeid', async (req, res) => {
   try {
@@ -26,6 +36,68 @@ router.get('/Nomeid', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+
+
+
+
+
+// Rota as colunas nome, descriçãoVegetal e apenas a primeria imagem pequena no primeiro tópico
+
+router.get('/nomeEdescricaoEfotoPequenasTodas', async (req, res) => {
+  try {
+    const alimentos = await PostAlimento.find({}, 'nome descricaoVegetal id_topico.foto.imagem_pequena')
+      .lean()
+      .exec();
+
+    // Para cada documento, manter apenas a primeira imagem_pequena dentro de id_topico
+    alimentos.forEach(alimento => {
+      if (alimento.id_topico && alimento.id_topico.foto && alimento.id_topico.foto.imagem_pequena) {
+        // Limitar a imagem_pequena para apenas o primeiro elemento
+        alimento.id_topico.foto.imagem_pequena = alimento.id_topico.foto.imagem_pequena[0];
+      }
+
+      // Se houver mais de um id_topico, mantenha apenas o primeiro
+      if (alimento.id_topico && Array.isArray(alimento.id_topico) && alimento.id_topico.length > 1) {
+        alimento.id_topico = alimento.id_topico[0];
+      }
+    });
+
+    res.json(alimentos);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -58,14 +130,41 @@ async function getAlimento(req, res, next) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Rota para pesquisar por nome incompleto no banco
 router.get('/nomeIncompleto/:nome', getReceitaIncompleta, (req, res) => {
   res.json(res.alimento);
 });
 
 
-
-// Rota para pesquisar por nome incompleto no banco
+// Função para pesquisar por nome incompleto no banco
 
 async function getReceitaIncompleta(req, res, next) {
 
@@ -132,6 +231,25 @@ router.delete('/deletarPorNome/:nome', async (req, res) => {
   // tipoDoAlimento: req.body.id_topico[0].subTopico[0].nomesubTopico,
   //     nomeCientifico: req.body.id_topico[0].nomeTopico,
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -226,6 +344,44 @@ const converterDadosAPIEmPostAlimento = (dadosAPI) => {
 
   return postAlimento;
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

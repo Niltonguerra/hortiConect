@@ -28,6 +28,23 @@ router.get('/Nomeid', async (req, res) => {
 
 
 
+// rota para pegar apenas o _id e nome do banco de dados
+router.get('/NomeTempoFoto', async (req, res) => {
+  try {
+    const alimentos = await PostReceita.find().select('nome').select('tempoDePreparo').select('foto.imagem_pequena')
+    
+    res.json(alimentos);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+
+
+
+
+
 // Rota para pesquisar por nome no banco
 router.get('/:nome', getReceita, (req, res) => {
   res.json(res.alimento);
@@ -88,6 +105,10 @@ async function getReceitaIncompleta(req, res, next) {
     res.status(500).json({ message: 'Erro ao buscar o registro' });
   }
 };
+
+
+
+
 
 
 

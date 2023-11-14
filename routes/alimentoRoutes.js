@@ -40,6 +40,19 @@ router.get('/Nomeid', async (req, res) => {
 
 
 
+// rota para pegar apenas o _id e nome do banco de dados
+router.get('/soTopicos', async (req, res) => {
+  try {
+    const alimentos = await PostAlimento.find().select('id_topico');
+    res.json(alimentos);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+
+
 
 
 // Rota as colunas nome, descriçãoVegetal e apenas a primeria imagem pequena no primeiro tópico

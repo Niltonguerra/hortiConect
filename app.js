@@ -28,6 +28,8 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' })); // Use o body
 app.use(express.json());
 
 
+// web
+
 const PostRouter = require('./routes/alimentoRoutes');
 app.use('/alimentos', PostRouter);
 
@@ -38,6 +40,17 @@ const formularioRoutes = require('./routes/formularioRoutes');
 app.use('/formulario', formularioRoutes);
 
 
+
+
+
+// mobile
+
+
+const PostRouterMobile = require('./routes/alimentoMobileRoutes');
+app.use('/alimentosMobile', PostRouterMobile);
+
+const ReceitasRouterMobile = require('./routes/receitaMobileRoutes');
+app.use('/receitasMobile', ReceitasRouterMobile);
 
 
 

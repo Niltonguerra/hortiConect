@@ -167,7 +167,6 @@ router.delete('/deletarPorNome/:nome', async (req, res) => {
 // busca no banco de dados pelos ingredientes da Receita
   router.get('/buscaIngredientes/:ingrediente', async (req, res) => {
     const ingrediente = req.params.ingrediente;
-  
     try {
       // Use o método findOneAndDelete para buscar e deletar o registro
       const registrosEncontrados = await PostReceita.find({ "ingredientes.nome": ingrediente });
@@ -196,7 +195,9 @@ router.post('/', async(req, res) => {
     
 
     const dadosDaAPI = req.body;
+    console.log(dadosDaAPI);
     const Receita = converterDadosAPIReceitas(dadosDaAPI);
+
     const newPostReceita = await Receita.save();
 
     // Responder com o novo documento criado
@@ -253,6 +254,8 @@ const fotoPequena = dadosAPI.foto.imagem_pequena;
     const ingredientes_array = {
       
       nome: ingredientes.nome,
+      quantidade: ingredientes.quantidade,
+      
       
     };
     novaReceita.ingredientes.push(ingredientes_array);

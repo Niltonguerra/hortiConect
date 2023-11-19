@@ -6,7 +6,9 @@ const mongoose = require('mongoose');
 const ingredientesShema = new mongoose.Schema({
   nome: {
     type: String,
-    
+  },
+  quantidade: {
+    type: String,
   },
 });
 
